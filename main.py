@@ -1,15 +1,14 @@
 import asyncio
 import logging
 import sys
-
-from aiogram import Bot, Dispatcher, html, types
+from aiogram import Bot, Dispatcher, Router, types
 from aiogram.client.default import DefaultBotProperties
 from aiogram.enums import ParseMode
-from aiogram.filters import CommandStart
-from aiogram.types import Message
 from config import TOKEN
+from AccountFilling import router as all_routers
 
-dp = Dispatcher()
+router = Router()
+router.include_router(all_routers)
 
 
 async def main() -> None:
@@ -19,12 +18,8 @@ async def main() -> None:
     commands = [
         types.BotCommand(command="start", description="botga ishga tushurish uchun bosing")
     ]
+    dp.include_router(router)
     await bot.set_my_commands(commands)
-
-    @dp.message(CommandStart())
-    async def command_start_handler(message: Message):
-        await message.answer(f"Hello, {html.bold(message.from_user.full_name)}!")
-
     await dp.start_polling(bot)
 
 
